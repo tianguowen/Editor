@@ -5,7 +5,7 @@
 
 typedef struct {
 	LinkList_Line data;//一个页节点中包含行链表
-
+	int Page_Num;
 };
 
 #endif // !PAGE_NODE_H
