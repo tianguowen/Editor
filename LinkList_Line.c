@@ -57,7 +57,7 @@ Statue ClearList(LinkList_Line *L) {
 	memset(L->head,0,sizeof(LNode_Line));
 	L->len = 0;
 }
-int Sum_Char_Num(LinkList_Line *L)
+int Sum_Char_Num_Line(LinkList_Line *L)
 {
 	Link_Line ptr = L->head;
 	int sum = 0;
@@ -67,11 +67,11 @@ int Sum_Char_Num(LinkList_Line *L)
 		ptr = ptr->next;
 	}
 }
-int Sum_Line_Num(LinkList_Line L)
+int Sum_Line_Num_Line(LinkList_Line L)
 {
 	ListLength(L);
 }
-int Sum_Line_Num_Link(Link_Line s)
+int Sum_Line_Num_Line_Link(Link_Line s)
 {
 	Link_Line ptr = s;
 	int index = 0;
@@ -81,7 +81,7 @@ int Sum_Line_Num_Link(Link_Line s)
 	}
 	return index;
 }
-int Sum_Char_Num_Link(Link_Line s)
+int Sum_Char_Num_Line_Link(Link_Line s)
 {
 	Link_Line ptr = s;
 	int index = 0;
