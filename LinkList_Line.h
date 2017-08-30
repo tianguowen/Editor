@@ -5,8 +5,6 @@
 #include<string.h>
 #include<stdlib.h>
 #include "Line_Node.h"
-#define LIST_INIT_SIZE 100
-#define LISTINCREMENT 10
 #define TRUE 1;
 #define FALSE 0;
 #define OK 1;
