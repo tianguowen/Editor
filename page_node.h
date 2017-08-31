@@ -9,4 +9,10 @@ typedef struct {
 	int Beg_Line_Num;
 }Page_Node;
 
+void Creat_Page_Node(Page_Node *p,LinkList_Line s)
+{
+	p->data = s;
+	p->Beg_Line_Num = 0;
+	p->Page_Num = 0;
+}
 #endif // !PAGE_NODE_H
