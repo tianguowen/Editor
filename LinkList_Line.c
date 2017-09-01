@@ -22,6 +22,18 @@ Statue MakeNode(Link_Line P, ElemType e) {
 	else
 		return ERROR;
 }
+Statue MakeNode_Char(Link_Line p, char *s)
+{
+	if (p) {
+		p = (LNode_Line*)malloc(sizeof(LNode_Line));
+		StrAssign(&(p->data).Line_String, s);
+		(p->data).Line_Num = (p->data).Beg_Pos = 0;
+		p->next = NULL;
+		return OK;
+	}
+	else
+		return ERROR;
+}
 void FreeNode(Link_Line P)
 {
 	DestoryLine_Node(&P->data);
@@ -35,6 +47,18 @@ Statue InitList(LinkList_Line *L) {
 	L->tail = p;
 	L->len = 0;
 	return OK;
+}
+Statue Init_Line_Page(LinkList_Line *L, char *s[ONE_PAGE_LINE_NUM])//创建一个页所构成的行
+{
+	InitList(L);
+	int index = 0;
+	while (index < ONE_PAGE_LINE_NUM)
+	{
+		Link_Line p;
+		MakeNode_Char(p, s[index]);
+		++index;
+		Append(L, p);
+	}
 }
 Statue DestroyList(LinkList_Line *L) {
 	while (L->head != NULL) {
@@ -133,6 +157,7 @@ void Change_Line_Beg_Data(Link_Line s, int beg_line_num, int beg_beg_pos)
 		(ptr->data).Beg_Pos = beg_beg_pos+j;
 		++i;
 		j += (ptr->data).Line_String.length;
+		ptr = ptr->next;
 	}
 }
 Statue Assign_Node(Link_Line h, Link_Line s)

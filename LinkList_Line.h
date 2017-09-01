@@ -12,6 +12,7 @@
 #define GREATER 1
 #define LESS -1
 #define EQUAL 0
+#define ONE_PAGE_LINE_NUM 20//每页设置20行
 typedef Line_Node ElemType;
 typedef int Statue;
 
@@ -29,8 +30,10 @@ typedef struct {
 //接口
 Statue Make_head_Node(Link_Line P);
 Statue MakeNode(Link_Line P,ElemType e);
+Statue MakeNode_Char(Link_Line p, char *s);
 void FreeNode(Link_Line P);
 Statue InitList(LinkList_Line *L);
+Statue Init_Line_Page(LinkList_Line *L,char *s[ONE_PAGE_LINE_NUM]);
 Statue DestroyList(LinkList_Line *L);
 Statue ClearList(LinkList_Line *L);
 int Sum_Char_Num_Line(LinkList_Line *L);

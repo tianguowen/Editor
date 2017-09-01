@@ -1,6 +1,6 @@
 #ifndef PAGELIST_H
 #define PAGELIST_H
-#define ONE_PAGE_LINE_NUM 20//√ø“≥…Ë÷√20––
+
 
 #include "Page_Node.h"
 
