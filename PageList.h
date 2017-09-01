@@ -26,10 +26,10 @@ Statue InitList(LinkList_Page *L);
 void Free_Node_Page(Link_Page *p);
 Statue DestroyList(LinkList_Page *L);
 Statue ClearList(LinkList_Page *L);
-int Sum_Char_Num_Page(LinkList_Line *L);
-int Sum_Line_Num_Page(LinkList_Line L);
-int Sum_Line_Num_Page_Link(Link_Line s);
-int Sum_Char_Num_Page_Link(Link_Line s);
+int Sum_Char_Num_Page(LinkList_Page *L);
+int Sum_Line_Num_Page(LinkList_Page *L);
+int Sum_Line_Num_Page_Link(Link_Page s);
+int Sum_Char_Num_Page_Link(Link_Page s);
 
 
 #endif // !PAGELIST_H
