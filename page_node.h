@@ -15,4 +15,10 @@ void Creat_Page_Node(Page_Node *p,LinkList_Line *s)
 	p->Beg_Line_Num = 0;
 	p->Page_Num = 0;
 }
+
+void Destory_Page_Node(Page_Node *p)
+{
+	DestroyList(&p->data);
+	free(p);
+}
 #endif // !PAGE_NODE_H
