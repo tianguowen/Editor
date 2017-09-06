@@ -53,10 +53,14 @@ Statue Append_Page(LinkList_Page *L, Link_Page s)
 	}
 	int Incre_Page_Num = L->Page_Len;
 	int Incre_Beg_Line_Num = Sum_Line_Num_Page(L);
+	Link_Page t = L->tail;
 	L->tail = p;
 	L->Page_Len += index;
 	Link_Page ptr = s;
-	Change_Page_Beg_Data(ptr, Incre_Beg_Line_Num + 1, Incre_Page_Num + 1);//
+	Change_Page_Beg_Data(ptr, Incre_Beg_Line_Num + 1, Incre_Page_Num + 1);//改变页的信息
+	Change_Page_Line_Information(ptr, 
+		t->Page_data.data.tail->data.Line_Num + 1, 
+		t->Page_data.data.tail->data.Beg_Pos + ptr->Page_data.data.tail->data.Line_String.length);//改变页内的行信息
 	return OK;
 }
 Statue Make_Book(LinkList_Page *L,char *s)//s代表文件的路径名称
@@ -72,16 +76,22 @@ Statue Make_Book(LinkList_Page *L,char *s)//s代表文件的路径名称
 	}//分配Line_Text的内存空间；
 	while (1)
 	{
-		while (fgets(text, ONE_LINE_CHAR_NUM, fp) != NULL&&index < ONE_PAGE_LINE_NUM)
+		int i = 0;
+		while (index < ONE_PAGE_LINE_NUM)
 		{
-			strcpy(Line_Text[index],text);//字符串赋值；
+			while (text[i] = getc(fp) != '.'&&text[i]!=NULL)
+			{
+				++i;
+			}
+			strcpy(Line_Text[index], &text);
 			++index;
+			memset(text, NULL, sizeof(text));
 		}
 		LinkList_Line *L_Line;
 		Init_Line_Page(L_Line, Line_Text);
 		Link_Page *p;
 		Make_Node_Page(p, L_Line);
-		Append_Page(L, L_Line);
+		Append_Page(L, p);
 		if (index != ONE_PAGE_LINE_NUM - 1)
 			break;
 		index = 0;
@@ -164,11 +174,58 @@ Statue Pos_Page_And_Line(LinkList_Page *page,Link_Page p, Link_Line l, int Del_L
 	int sum = 0;
 	while (ptr != NULL)
 	{
-		
+		if ((ptr->next)->Page_data.Beg_Line_Num > Del_Line_Num)
+			break;
+		else
+			ptr = ptr->next;
+	}
+	p = ptr;
+	Link_Line ltr = (ptr->Page_data).data.head->next;
+	while (ltr != NULL)
+	{
+		if (ltr->data.Line_Num == Del_Line_Num)
+			break;
+		else
+			ltr = ltr->next;
+	}
+	l = ltr;
+}
+Statue Change_Page_Line_Information(Link_Page p, int Beg_Line_Num,int Beg_char_pos)//改变后面所有的页面及行的信息
+{
+	Link_Page ptr = p;
+	while (ptr != NULL)
+	{
+		Change_Line_Beg_Data(ptr->Page_data.data.head->next, Beg_Line_Num, Beg_char_pos);
+		Beg_Line_Num += Sum_Line_Num_Line(ptr->Page_data.data) + 1;
+		Beg_char_pos += Sum_Char_Num_Line(&ptr->Page_data.data) + 1;
+		ptr = ptr->next;
 	}
 }
-Statue Dele_Line_Page(LinkList_Page *L, int Del_Line_Num)//删除一行后对整本书进行行序调整
+Statue Dele_Line_Page(LinkList_Page *L, int Del_Line_Num,int Need_del_line_Num)//删除一行后对整本书进行行序调整
 {
-	Link_Page ptr = L->head;
-
+	Link_Page ptr;
+	Link_Line ltr;
+	Pos_Page_And_Line(L, ptr, ltr, Del_Line_Num);
+	Link_Line s;//用于保留被删除的行节点
+	if (ptr->next == NULL)//没有后面的页，所以不需要改变后面页的内容，只需要调整该页面内的行信息
+	{
+		if (ptr->Page_data.data.head->next == ltr)
+		{
+			Dele_Link(&ptr->Page_data.data, ltr, Need_del_line_Num, s);
+			ptr->Page_data.Beg_Line_Num = ptr->Page_data.data.head->next->data.Line_Num;
+		}
+		else
+		{
+			Dele_Link(&ptr->Page_data.data, ltr, Need_del_line_Num, s);
+		}
+	}
+	else//后面有页，需要改变后面的所有信息
+	{
+		Dele_Link(&ptr->Page_data.data, ltr, Need_del_line_Num, s);
+		Change_Page_Line_Information(ptr->next,
+			ptr->Page_data.data.tail->data.Line_Num + 1,
+			ptr->next->Page_data.data.tail->data.Beg_Pos + ptr->Page_data.data.tail->data.Line_String.length);
+		Change_Page_Beg_Data(ptr->next, 
+			ptr->Page_data.data.tail->data.Line_Num + 1,ptr->Page_data.Page_Num+1);
+	}
 }
