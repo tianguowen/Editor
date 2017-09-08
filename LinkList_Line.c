@@ -115,6 +115,17 @@ int Sum_Char_Num_Line_Link(Link_Line s)
 	}
 	return index;
 }
+int Sum_Line_Num_To_Tail(Link_Line s)
+{
+	int index = 1;
+	Link_Line ptr = s;
+	while (ptr != NULL)
+	{
+		++index;
+		ptr = ptr->next;
+	}
+	return index;
+}
 void Insert_Change_After(Link_Line s,int add_line_num,int add_beg_pos)
 {
 	Link_Line ptr = s;
@@ -181,6 +192,15 @@ Statue Append(LinkList_Line *L, Link_Line s) {
 	Change_Line_Beg_Data(ptr, incre_Line_Num+1, incre_Num+1);//
 	return OK;
 }
+Statue Append_Link_Line(Link_Line s1, Link_Line s2)
+{
+	Link_Line p = s1;
+	while (p->next != NULL)
+	{
+		p = p->next;
+	}
+	p->next = s2;
+}
 Statue InsBefore(LinkList_Line *L, Link_Line p, Link_Line s) {
 	int s_length = Get_Link_Length(s);
 	Link_Line ptr_s = s;
@@ -211,7 +231,7 @@ Statue Dele_Link(LinkList_Line *L, Link_Line p, int Del_Line_Num, Link_Line s)
 	{
 		p1 = p1->next;
 	}
-	s = ptr->next;
+	s= ptr->next;
 	ptr->next = p1->next;
 	p1->next = NULL;
 	Delete_Change_After(ptr->next, Sum_Line_Num_Link(s), Sum_Char_Num_Link(s));

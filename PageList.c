@@ -58,9 +58,14 @@ Statue Append_Page(LinkList_Page *L, Link_Page s)
 	L->Page_Len += index;
 	Link_Page ptr = s;
 	Change_Page_Beg_Data(ptr, Incre_Beg_Line_Num + 1, Incre_Page_Num + 1);//改变页的信息
-	Change_Page_Line_Information(ptr, 
-		t->Page_data.data.tail->data.Line_Num + 1, 
-		t->Page_data.data.tail->data.Beg_Pos + ptr->Page_data.data.tail->data.Line_String.length);//改变页内的行信息
+	if (t == NULL)
+		Change_Page_Line_Information(ptr, 1, 1);
+	else
+	{
+		Change_Page_Line_Information(ptr,
+			t->Page_data.data.tail->data.Line_Num + 1,
+			t->Page_data.data.tail->data.Beg_Pos + ptr->Page_data.data.tail->data.Line_String.length);
+	}//改变页内的行信息
 	return OK;
 }
 Statue Make_Book(LinkList_Page *L,char *s)//s代表文件的路径名称
@@ -165,6 +170,27 @@ int Sum_Char_Num_Page_Link(Link_Page s)
 	}
 	return sum;
 }
+int If_Jump_The_Page(LinkList_Page *page,Link_Page p,Link_Page p2,int Beg_Line_Num, int Need_Del_Line_Num,int Jump_Page_Num)
+//用于判断要删除的行数是否跨页，如果跨页则返回给Jump_Page_Num,并将要删除页的起始节点指针返回给p;
+{
+	Link_Line l;
+	Pos_Page_And_Line(page, p, l, Beg_Line_Num);
+	int Finish_Line_Num = Beg_Line_Num + Need_Del_Line_Num;
+	Link_Page ps = p;
+	p = p->next;
+	int index = 0;
+	while (ps->next->Page_data.data.tail->data.Line_Num <= Finish_Line_Num)
+	{
+		++index;
+		ps = ps->next;
+	}
+	p2 = ps;
+	Jump_Page_Num = index;
+	if (p2 == p || p2 == p->next)
+		return 0;
+	else
+		return 1;
+}
 Statue Pos_Page_And_Line(LinkList_Page *page,Link_Page p, Link_Line l, int Del_Line_Num)
 {
 	Link_Page ptr = page->head;
@@ -201,13 +227,66 @@ Statue Change_Page_Line_Information(Link_Page p, int Beg_Line_Num,int Beg_char_p
 		ptr = ptr->next;
 	}
 }
-Statue Dele_Line_Page(LinkList_Page *L, int Del_Line_Num,int Need_del_line_Num)//删除一行后对整本书进行行序调整
+Statue Pos_Page_Num(LinkList_Page *page, Link_Page p, int Del_Page_Num)
+{
+	Link_Page ptr = page->head->next;
+	while (ptr != NULL)
+	{
+		if (ptr->Page_data.Page_Num == Del_Page_Num)
+		{
+			p = ptr;
+			break;
+		}
+		else
+		{
+			ptr = ptr->next;
+		}
+	}
+}
+Statue Prio_Page_Link(LinkList_Page *L, Link_Page p, Link_Page p1)//定位该页指针p之前的一个节点指针
+{
+	Link_Page ptr = L->head;
+	while (ptr->next != p)
+	{
+		ptr = ptr->next;
+	}
+	p1 = ptr;
+	return OK;
+	if (!p1)
+		return ERROR;
+}
+Statue Dele_Page_Link(LinkList_Page *L, Link_Page p,int Del_Page_Num, int Need_Del_Page_Num)
+//直接进行删除页的操作,p用于获取删除行的链表
+{
+	Link_Page ptr;
+	Pos_Page_Num(L, ptr, Del_Page_Num);//获取我们要删除的页起始节点
+	Link_Page s = ptr;//s是要删除页链表的最后一个节点
+	int index = 1;
+	while (index != Need_Del_Page_Num)
+	{
+		s = s->next;
+	}
+	Link_Page prio_ptr;
+	Prio_Page_Link(L, ptr, prio_ptr);
+	p = ptr;
+	prio_ptr->next= s->next;
+	s->next = NULL;
+	Change_Page_Beg_Data(prio_ptr->next, prio_ptr->Page_data.data.tail->data.Line_Num + 1, prio_ptr->Page_data.Page_Num + 1);
+	//改变接下来的后面页数的信息
+	Change_Page_Line_Information(prio_ptr->next, prio_ptr->Page_data.data.tail->data.Line_Num + 1,
+		prio_ptr->Page_data.data.tail->data.Beg_Pos + prio_ptr->Page_data.data.tail->data.Line_String.length);
+	//改变接下来后面所有的页中行信息
+}
+Statue Dele_Line_Page(LinkList_Page *L, Link_Line get_line,int Del_Line_Num,int Need_del_line_Num)//删除一行后对整本书进行行序调整
 {
 	Link_Page ptr;
 	Link_Line ltr;
 	Pos_Page_And_Line(L, ptr, ltr, Del_Line_Num);
+	Link_Page ptr1,ptr2;//ptr1是要删除页的起始节点，ptr2是终结节点。
+	int Jump_Page_Num;//要删除页节点的长度
+	If_Jump_The_Page(L, ptr1, ptr2, Del_Line_Num, Need_del_line_Num, Jump_Page_Num);
 	Link_Line s;//用于保留被删除的行节点
-	if (ptr->next == NULL)//没有后面的页，所以不需要改变后面页的内容，只需要调整该页面内的行信息
+	if (ptr->next == NULL)//在最后一页删除行，所以不需要改变后面页的内容，只需要调整该页面内的行信息
 	{
 		if (ptr->Page_data.data.head->next == ltr)
 		{
@@ -219,13 +298,47 @@ Statue Dele_Line_Page(LinkList_Page *L, int Del_Line_Num,int Need_del_line_Num)/
 			Dele_Link(&ptr->Page_data.data, ltr, Need_del_line_Num, s);
 		}
 	}
-	else//后面有页，需要改变后面的所有信息
+	else if(Sum_Line_Num_To_Tail(ltr)>=Need_del_line_Num)//删除行的数目不会跨到下一页去，所以只会在本行内删除行信息
 	{
 		Dele_Link(&ptr->Page_data.data, ltr, Need_del_line_Num, s);
 		Change_Page_Line_Information(ptr->next,
 			ptr->Page_data.data.tail->data.Line_Num + 1,
-			ptr->next->Page_data.data.tail->data.Beg_Pos + ptr->Page_data.data.tail->data.Line_String.length);
+			ptr->Page_data.data.tail->data.Beg_Pos + ptr->Page_data.data.tail->data.Line_String.length);
 		Change_Page_Beg_Data(ptr->next, 
 			ptr->Page_data.data.tail->data.Line_Num + 1,ptr->Page_data.Page_Num+1);
 	}
+	else if (Jump_Page_Num == 0)//会跨页但是只是跨到下一页，但是不需要删页操作
+	{
+		int next_page_del_num = Need_del_line_Num - Sum_Line_Num_To_Tail(ltr);
+		Dele_Link(&ptr->Page_data.data, ltr, Sum_Line_Num_To_Tail(ltr),s);
+		Link_Line s2;
+		Dele_Link(&ptr->next->Page_data.data, ptr->Page_data.data.head->next, next_page_del_num, s2);
+		Change_Page_Line_Information(ptr->next, ptr->Page_data.data.tail->data.Line_Num + 1,
+			ptr->Page_data.data.tail->data.Beg_Pos + ptr->Page_data.data.tail->data.Line_String.length);
+		Change_Page_Beg_Data(ptr->next, ptr->next->Page_data.data.head->next->data.Line_Num,
+			ptr->next->Page_data.Page_Num);
+		Append_Link_Line(s, s2);
+	}
+	else//会跨页，而且中间的页数可以进行整页整页的删除操作
+	{
+		Link_Page p;//用于记忆被删除的页信息；
+		Dele_Page_Link(L, p, ptr1->Page_data.Page_Num, Jump_Page_Num);//直接删除了页节点并重置了整本书
+		int next_page_del_num = Need_del_line_Num - Sum_Line_Num_Page_Link(p) - Sum_Line_Num_To_Tail(ltr);
+		Dele_Link(&ptr->Page_data.data, ltr, Sum_Line_Num_To_Tail(ltr), s);
+		Link_Line s2;
+		Dele_Link(&ptr->next->Page_data.data, ptr->Page_data.data.head->next, next_page_del_num, s2);
+		Change_Page_Line_Information(ptr->next, ptr->Page_data.data.tail->data.Line_Num + 1,
+			ptr->Page_data.data.tail->data.Beg_Pos + ptr->Page_data.data.tail->data.Line_String.length);
+		Change_Page_Beg_Data(ptr->next, ptr->next->Page_data.data.head->next->data.Line_Num,
+			ptr->next->Page_data.Page_Num);
+		Link_Line ps = s;
+		while(ps->next!=NULL)
+		{
+			ps = ps->next;
+		}
+		p->Page_data.data.tail->next = s2;
+		ps->next = p->Page_data.data.head->next;//将删除的的行信息全部归结到s链表中去
+	}
+	get_line = s;
+	return OK;
 }
