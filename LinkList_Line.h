@@ -52,7 +52,7 @@ Statue InsBefore(LinkList_Line *L, Link_Line p, Link_Line s);
 Statue Dele_Link(LinkList_Line *L, Link_Line p, int Del_Line_Num,Link_Line s);
 Statue ListEmpty(LinkList_Line L);
 int ListLength(LinkList_Line L);
-Position_Line PriorPos(LinkList_Line L, Link_Line p,Link_Line q);
+Position_Line PriorPos(LinkList_Line *L, Link_Line p,Link_Line q);
 Position_Line NextPos(LinkList_Line L, Link_Line p);
 Statue Change_String(Link_Line p, char *s);
 Statue Change_String_Copy(Link_Line p, HString s);

@@ -224,7 +224,7 @@ Statue InsBefore(LinkList_Line *L, Link_Line p, Link_Line s) {
 Statue Dele_Link(LinkList_Line *L, Link_Line p, int Del_Line_Num, Link_Line s)
 {
 	Link_Line ptr;
-	PriorPos(*L,p,ptr);
+	PriorPos(L,p,ptr);
 	Link_Line p1 = ptr;
 	int index = 0;
 	while (index != Del_Line_Num)
@@ -256,11 +256,11 @@ int ListLength(LinkList_Line L) {
 	}
 	return index;
 }
-Position_Line PriorPos(LinkList_Line L, Link_Line p,Link_Line q) {
-	if (p == L.head)
+Position_Line PriorPos(LinkList_Line *L, Link_Line p,Link_Line q) {
+	if (p == L->head)
 		return NULL;
 	else {
-		q = L.head;
+		q = L->head;
 		while (q->next != p) {
 			q = q->next;
 		}

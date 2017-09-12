@@ -5,7 +5,9 @@ Statue Make_Head_Node_Page(Link_Page P)
 	P = (Link_Page*)malloc(sizeof(Link_Page));
 	P->next = NULL;
 	if (P)
+	{
 		return OK;
+	}
 	else
 	{
 		return ERROR;
@@ -341,4 +343,42 @@ Statue Dele_Line_Page(LinkList_Page *L, Link_Line get_line,int Del_Line_Num,int 
 	}
 	get_line = s;
 	return OK;
+}
+Statue Insert_Page_Bef(LinkList_Page *L, Link_Page p,Link_Page q)
+//将q所指的页面节点插入p节点之前
+{
+	Link_Page l;
+	Prio_Page_Link(L, p, l);//l即为p节点的前一个节点
+	p->next = l->next;
+	l->next = p;//已经接入了新的页面节点
+	//接下来还是要改变页面及页面内的行信息
+	Change_Page_Beg_Data(p, l->Page_data.data.tail->data.Line_Num + 1, l->Page_data.Page_Num + 1);
+	Change_Page_Line_Information(p, l->Page_data.data.tail->data.Line_Num + 1,
+		l->Page_data.data.tail->data.Beg_Pos + l->Page_data.data.tail->data.Line_String.length);
+	return OK;
+}
+Statue Split_Page(LinkList_Page *L, int Line_Num)
+//在Line_Num之前进行页分裂操作。
+{
+	Link_Page ptr;
+	Link_Line ltr;
+	Link_Line Bef_ltr;
+	Pos_Page_And_Line(L, ptr, ltr, Line_Num);
+	PriorPos(&ptr->Page_data.data, ltr, Bef_ltr);
+	Bef_ltr->next = NULL;
+	ptr->Page_data.data.tail = Bef_ltr;
+	Link_Page Ins_p;
+	Make_Node_Page(Ins_p, ltr);
+	Insert_Page_Bef(L, ptr->next, Ins_p);
+}
+Statue Insert_Line_Page(LinkList_Page *L, int Ins_Line_Num, Link_Line Ins_Line)
+//在Ins_Line_Num的行号之前插入Link_Line的行链表
+{
+	Link_Page ptr;
+	Link_Line ltr;
+	Pos_Page_And_Line(L, ptr, ltr, Ins_Line_Num);//定位行号所指定的页及行指针
+	InsBefore(&ptr->Page_data.data, ltr, Ins_Line);	
+	Change_Page_Beg_Data(ptr->next, ptr->Page_data.data.tail->data.Line_Num + 1, ptr->Page_data.Page_Num + 1);
+	Change_Page_Line_Information(ptr->next, ptr->Page_data.data.tail->data.Line_Num + 1,
+		ptr->Page_data.data.tail->data.Beg_Pos + ptr->Page_data.data.tail->data.Line_String.length);
 }
