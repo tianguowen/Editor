@@ -24,7 +24,6 @@ Statue StrAssign(HString *T,char *chars)
         T->length=char_num;
     } 
 }
-
 Statue StrCopy(HString *T,HString S)
 {
     if(T->ch)
@@ -49,7 +48,6 @@ Statue StrCopy(HString *T,HString S)
         T->length=S.length;
     }
 }
-
 Statue StrEmpty(HString S)
 {
     if(S.length==0)
@@ -59,7 +57,6 @@ Statue StrEmpty(HString S)
         return FALSE;
     }
 }
-
 Statue StrCompare(HString T,HString S)
 {
     if(StrEmpty(T)||StrEmpty(S))
@@ -90,18 +87,15 @@ Statue StrCompare(HString T,HString S)
         }
     }
 }
-
 int StrLength(HString S)
 {
     return S.length;
 }
-
 Statue ClearString(HString *S)
 {
     memset(S->ch,0,sizeof(char)*S->length);
     S->length=0;
 }
-
 Statue Concat(HString *T,HString S1,HString S2)
 {
     if(T->ch)
@@ -128,7 +122,6 @@ Statue Concat(HString *T,HString S1,HString S2)
         return OK;
     }
 }
-
 Statue SubString(HString *Sub,HString S,int pos,int len)
 {
     if(Sub->ch)
@@ -156,7 +149,6 @@ Statue SubString(HString *Sub,HString S,int pos,int len)
         return FALSE;
     }
 }
-
 void get_next(HString T,int next[])
 {
     int len=T.length;
@@ -180,7 +172,6 @@ void get_next(HString T,int next[])
         }
     }
 }
-
 int Index(HString S,HString T,int pos)
 {
     int next[100];
@@ -202,13 +193,12 @@ int Index(HString S,HString T,int pos)
         return 0;
     }
 }
-
 Statue Replace(HString *S,HString T,HString V)//用V替换S主串中所有与T相等且不重叠的子串
 {
     int pos=0;
     if(T.length==V.length)//两个替换字符长度相同，所以我们可以不用重新分配内存
     {
-        while(pos=index(*S,T,pos))//循环找出与S中与T匹配的字符串
+        while(pos=Index(*S,T,pos))//循环找出与S中与T匹配的字符串
         {
             for(int j=0;j<T.length;++j,++pos)
             (S->ch)[pos]=T.ch[j];
@@ -216,7 +206,7 @@ Statue Replace(HString *S,HString T,HString V)//用V替换S主串中所有与T�
     }
     else if (T.length>V.length)
     {
-        while(pos=index(*S,T,pos))
+        while(pos=Index(*S,T,pos))
         {
             for(int j=0;j<V.length;++j,++pos)
             (S->ch)[pos]=T.ch[j];
@@ -225,15 +215,19 @@ Statue Replace(HString *S,HString T,HString V)//用V替换S主串中所有与T�
             for(;i<S->length;++i)
             (S->ch)[i]=(S->ch)[i+k];//后面的字符向前移动
         }
-        realloc(S->ch,S->length);//重新分配数据区，将替换后删除的数据截断
+		char *s_tmp;
+		s_tmp = realloc(S->ch, S->length);//重新分配数据区，将替换后删除的数据截断
+		S->ch = s_tmp;
     }
     else
     {
-        while(pos=index(*S,T,pos))
+        while(pos=Index(*S,T,pos))
         {
             int k=V.length-T.length;
             S->length+=k;
-            realloc(S->ch,S->length);//重新分配空间
+			char *s_tmp;
+			s_tmp = realloc(S->ch, S->length);//重新分配数据区，将替换后删除的数据截断
+			S->ch = s_tmp;
             int j=S->length-1;
             int i=pos;
             for(;j>=i+V.length;--j)
@@ -243,12 +237,13 @@ Statue Replace(HString *S,HString T,HString V)//用V替换S主串中所有与T�
         }
     }
 }
-
 Statue StrInsert(HString *S,int pos,HString T)
 {
     int k=T.length;
     S->length+=k;
-    realloc(S->ch,S->length);
+	char *s_tmp;
+	s_tmp = realloc(S->ch, S->length);//重新分配数据区，将替换后删除的数据截断
+	S->ch = s_tmp;
     int j=S->length-1;
     for(;j>=pos-1+k;--j)
     (S->ch)[j]=(S->ch)[j-k];
@@ -256,7 +251,6 @@ Statue StrInsert(HString *S,int pos,HString T)
     (S->ch)[i]=T.ch[m];
     return OK;
 }
-
 Statue StrDelete(HString *S,int pos,int len)
 {
     int i=pos-1;
@@ -265,13 +259,18 @@ Statue StrDelete(HString *S,int pos,int len)
         (S->ch)[i]=(S->ch)[i+len];
     }
     S->length-=len;
-    realloc(S->ch,S->length);
+	char *s_tmp;
+	s_tmp = realloc(S->ch, S->length);//重新分配数据区，将替换后删除的数据截断
+	S->ch = s_tmp;
     return OK;
 }
-
 Statue DestoryString(HString *S)
 {
     free(S->ch);
     free(S);
     return OK;
+}
+void HStringPrint(HString *S)
+{
+	printf("%s", S->ch);
 }

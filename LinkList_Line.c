@@ -34,6 +34,18 @@ Statue MakeNode_Char(Link_Line p, char *s)
 	else
 		return ERROR;
 }
+void Change_Link_To_LinkList(LinkList_Line *L, Link_Line p)
+{
+	InitList(L);
+	L->head = p;
+	Link_Line tmp = p;
+	while (tmp->next != NULL)
+	{
+		tmp = tmp->next;
+	}
+	L->tail = tmp;
+	L->len = Sum_Line_Num_Line_Link(p);
+}
 void FreeNode(Link_Line P)
 {
 	DestoryLine_Node(&P->data);
@@ -184,7 +196,7 @@ Statue Append(LinkList_Line *L, Link_Line s) {
 		p = p->next;
 		++index;
 	}
-	int incre_Num = Sum_Char_Num(L);
+	int incre_Num = Sum_Char_Num_Line(L);
 	int incre_Line_Num = L->len;//s开头的链表需要增加的行号；
 	L->tail = p;
 	L->len += index;
@@ -203,8 +215,8 @@ Statue Append_Link_Line(Link_Line s1, Link_Line s2)
 }
 Statue InsBefore(LinkList_Line *L, Link_Line p, Link_Line s) {
 	int s_length = Get_Link_Length(s);
-	Link_Line ptr_s = s;
-	Change_Line_Beg_Data(ptr_s, (p->data).Line_Num, (p->data).Beg_Pos);
+	Link_Line ptr_s1 = s;
+	Change_Line_Beg_Data(ptr_s1, (p->data).Line_Num, (p->data).Beg_Pos);
 	LNode_Line *ptr = L->head;
 	while (ptr->next != p)
 	{
@@ -217,7 +229,7 @@ Statue InsBefore(LinkList_Line *L, Link_Line p, Link_Line s) {
 		ptr_s = ptr_s->next;
 	}
 	ptr_s->next = p;
-	Insert_Change_After(p, Sum_Line_Num_Link(s), Sum_Char_Num_Link(s));
+	Insert_Change_After(p, Sum_Line_Num_Line_Link(s), Sum_Char_Num_Line_Link(s));
 	p = s;
 	return OK;
 }
@@ -234,7 +246,7 @@ Statue Dele_Link(LinkList_Line *L, Link_Line p, int Del_Line_Num, Link_Line s)
 	s= ptr->next;
 	ptr->next = p1->next;
 	p1->next = NULL;
-	Delete_Change_After(ptr->next, Sum_Line_Num_Link(s), Sum_Char_Num_Link(s));
+	Delete_Change_After(ptr->next, Sum_Line_Num_Line_Link(s), Sum_Char_Num_Line_Link(s));
 	return OK;
 }
 Statue ListEmpty(LinkList_Line L) {
@@ -307,4 +319,12 @@ Statue Change_String_Delete(Link_Line p, int pos, int len)
 	StrDelete(&(p->data).Line_String, pos,len);
 	int j = (p->data).Line_String.length - i;
 	Insert_Change_After(p->next, 0, j);
+}
+void Print_Line(LinkList_Line *L)
+{
+	Link_Line ptr = L->head;
+	while (ptr != NULL)
+	{
+		HStringPrint(&ptr->data.Line_String);
+	}
 }

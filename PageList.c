@@ -90,7 +90,8 @@ Statue Make_Book(LinkList_Page *L,char *s)//s代表文件的路径名称
 			{
 				++i;
 			}
-			strcpy(Line_Text[index], &text);
+			text[i + 1] = '\0';
+			strcpy(Line_Text[index], text);
 			++index;
 			memset(text, NULL, sizeof(text));
 		}
@@ -113,10 +114,10 @@ Statue Make_Book(LinkList_Page *L,char *s)//s代表文件的路径名称
 		free(Line_Text[index]);
 	}//释放Line_Text的内存空间；
 }
-Statue InitList(LinkList_Page *L)
+Statue InitList_Page(LinkList_Page *L)
 {
 	L = (LinkList_Page*)malloc(sizeof(LinkList_Page));
-	Link_Page *p;
+	Link_Page p;
 	Make_head_Node(p);
 	L->head = p;
 	L->tail = p;
@@ -196,7 +197,6 @@ int If_Jump_The_Page(LinkList_Page *page,Link_Page p,Link_Page p2,int Beg_Line_N
 Statue Pos_Page_And_Line(LinkList_Page *page,Link_Page p, Link_Line l, int Del_Line_Num)
 {
 	Link_Page ptr = page->head;
-	int sum;
 	if (Del_Line_Num > Sum_Line_Num_Page(page))
 		return ERROR;
 	int sum = 0;
@@ -368,7 +368,9 @@ Statue Split_Page(LinkList_Page *L, int Line_Num)
 	Bef_ltr->next = NULL;
 	ptr->Page_data.data.tail = Bef_ltr;
 	Link_Page Ins_p;
-	Make_Node_Page(Ins_p, ltr);
+	LinkList_Line List_tmp;
+	Chang_Link_To_LinkList(&List_tmp,ltr);
+	Make_Node_Page(Ins_p, &List_tmp);
 	Insert_Page_Bef(L, ptr->next, Ins_p);
 }
 Statue Insert_Line_Page(LinkList_Page *L, int Ins_Line_Num, Link_Line Ins_Line)
@@ -381,4 +383,12 @@ Statue Insert_Line_Page(LinkList_Page *L, int Ins_Line_Num, Link_Line Ins_Line)
 	Change_Page_Beg_Data(ptr->next, ptr->Page_data.data.tail->data.Line_Num + 1, ptr->Page_data.Page_Num + 1);
 	Change_Page_Line_Information(ptr->next, ptr->Page_data.data.tail->data.Line_Num + 1,
 		ptr->Page_data.data.tail->data.Beg_Pos + ptr->Page_data.data.tail->data.Line_String.length);
+}
+void Print_Page(LinkList_Page *P)
+{
+	Link_Page p;
+	while (p != NULL)
+	{
+		Print_Line(&p->Page_data.data);
+	}
 }

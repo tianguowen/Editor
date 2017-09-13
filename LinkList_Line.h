@@ -5,10 +5,6 @@
 #include<string.h>
 #include<stdlib.h>
 #include "Line_Node.h"
-#define TRUE 1;
-#define FALSE 0;
-#define OK 1;
-#define ERROR 0
 #define GREATER 1
 #define LESS -1
 #define EQUAL 0
@@ -31,6 +27,7 @@ typedef struct {
 Statue Make_head_Node(Link_Line P);
 Statue MakeNode(Link_Line P,ElemType e);
 Statue MakeNode_Char(Link_Line p, char *s);
+void Chang_Link_To_LinkList(LinkList_Line *L, Link_Line p);
 void FreeNode(Link_Line P);
 Statue InitList(LinkList_Line *L);
 Statue Init_Line_Page(LinkList_Line *L,char *s[ONE_PAGE_LINE_NUM]);
@@ -59,5 +56,5 @@ Statue Change_String_Copy(Link_Line p, HString s);
 Statue Change_String_Replace(Link_Line p, HString T, HString V);
 Statue Change_String_Insert(Link_Line p, int pos, HString T);
 Statue Change_String_Delete(Link_Line p, int pos, int len);
-
+void Print_Line(LinkList_Line *L);
 #endif

@@ -3,6 +3,7 @@
 
 #include<stdlib.h>
 #include<stdio.h>
+#include<string.h>
 #define INITIAL_LENGTH 100
 #define REALLOC_LENGTH 10
 typedef int Statue;
@@ -29,5 +30,6 @@ Statue Replace(HString *S,HString T,HString V);//用V替换S主串中所有与T�
 Statue StrInsert(HString *S,int pos,HString T);//在S的pos个字符前插入T
 Statue StrDelete(HString *S,int pos,int len);//从S中pos个字符开始起始长度为len的字符子串
 Statue DestoryString(HString *S);//销毁我们的字符串
+void HStringPrint(HString *S);//打印该HString;
 
 #endif
