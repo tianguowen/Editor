@@ -2,7 +2,7 @@
 
 Statue Make_Head_Node_Page(Link_Page P)
 {
-	P = (Link_Page*)malloc(sizeof(Link_Page));
+	P = (Link_Page)malloc(sizeof(Link_Page));
 	P->next = NULL;
 	if (P)
 	{
@@ -19,14 +19,14 @@ void Assign_Page_Node(Link_Page p, Elemtype_Page e)
 	Link_Line s2 = e.data.head->next;
 	while (s1 != NULL)
 	{
-		Assign_Line(s1, s2);
+		Assign_Node(s1, s2);
 		s1 = s1->next;
 		s2 = s2->next;
 	}
 }
 Statue Make_Node_Page(Link_Page p, LinkList_Line *e)
 {
-	p = (Link_Page*)malloc(sizeof(Link_Page));
+	p = (Link_Page)malloc(sizeof(Link_Page));
 	Creat_Page_Node(&(p->Page_data), e);
 	p->next = NULL;
 }
@@ -75,6 +75,11 @@ Statue Make_Book(LinkList_Page *L,char *s)//s代表文件的路径名称
 	FILE *fp;//定义文件句柄
 	char text[1024];//text读取文件的缓冲数组
 	fp=fopen(s, "w");
+	if (!fp)
+	{
+		printf("ERROR");
+		return 0;
+	}
 	int index = 0;
 	char *Line_Text[ONE_PAGE_LINE_NUM];//定义存储的字符串数组
 	for (int i = 0; i < ONE_PAGE_LINE_NUM; ++i)
@@ -86,27 +91,27 @@ Statue Make_Book(LinkList_Page *L,char *s)//s代表文件的路径名称
 		int i = 0;
 		while (index < ONE_PAGE_LINE_NUM)
 		{
-			while (text[i] = getc(fp) != '.'&&text[i]!=NULL)
+			while (text[i] = getc(fp) != '.'&&text[i]!='\0')
 			{
 				++i;
 			}
 			text[i + 1] = '\0';
 			strcpy(Line_Text[index], text);
 			++index;
-			memset(text, NULL, sizeof(text));
+			memset(text, 0, sizeof(text));
 		}
 		LinkList_Line *L_Line;
 		Init_Line_Page(L_Line, Line_Text);
-		Link_Page *p;
+		Link_Page p;
 		Make_Node_Page(p, L_Line);
 		Append_Page(L, p);
 		if (index != ONE_PAGE_LINE_NUM - 1)
 			break;
 		index = 0;
-		int i = 0;
+		i = 0;
 		while (i < ONE_PAGE_LINE_NUM)
 		{
-			memset(Line_Text[i], NULL, sizeof(Line_Text[0]));
+			memset(Line_Text[i], 0, sizeof(Line_Text[0]));
 		}//全部清空Line_Text字符串数组，留作下一次循环使用
 	}
 	for (int i = 0; i < ONE_PAGE_LINE_NUM; ++i)
@@ -118,7 +123,7 @@ Statue InitList_Page(LinkList_Page *L)
 {
 	L = (LinkList_Page*)malloc(sizeof(LinkList_Page));
 	Link_Page p;
-	Make_head_Node(p);
+	Make_Head_Node_Page(p);
 	L->head = p;
 	L->tail = p;
 	L->Page_Len = 0;
@@ -126,7 +131,7 @@ Statue InitList_Page(LinkList_Page *L)
 }
 void Free_Node_Page(Link_Page p)
 {
-	Destroy_Page_Node(&p->Page_data.data);//先调用LinkList_Line的析构函数
+	Destory_PageNode(&p->Page_data);
 	free(p);
 }
 int Sum_Char_Num_Page(LinkList_Page *L)
@@ -369,7 +374,7 @@ Statue Split_Page(LinkList_Page *L, int Line_Num)
 	ptr->Page_data.data.tail = Bef_ltr;
 	Link_Page Ins_p;
 	LinkList_Line List_tmp;
-	Chang_Link_To_LinkList(&List_tmp,ltr);
+	Change_Link_To_LinkList(&List_tmp,ltr);
 	Make_Node_Page(Ins_p, &List_tmp);
 	Insert_Page_Bef(L, ptr->next, Ins_p);
 }

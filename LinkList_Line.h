@@ -27,7 +27,7 @@ typedef struct {
 Statue Make_head_Node(Link_Line P);
 Statue MakeNode(Link_Line P,ElemType e);
 Statue MakeNode_Char(Link_Line p, char *s);
-void Chang_Link_To_LinkList(LinkList_Line *L, Link_Line p);
+void Change_Link_To_LinkList(LinkList_Line *L, Link_Line p);
 void FreeNode(Link_Line P);
 Statue InitList(LinkList_Line *L);
 Statue Init_Line_Page(LinkList_Line *L,char *s[ONE_PAGE_LINE_NUM]);
