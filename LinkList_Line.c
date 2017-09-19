@@ -2,33 +2,33 @@
 //接口实现
 
 
-Statue Make_head_Node(Link_Line P) {
-	if (P) {
-		P = (LNode_Line*)malloc(sizeof(LNode_Line));
-		P->next = NULL;
+Statue Make_head_Node(Link_Line *P) {
+	if (*P) {
+		*P = (LNode_Line*)malloc(sizeof(LNode_Line));
+		(*P)->next = NULL;
 		return OK;
 	}
 	else
 		return ERROR;
 }
-Statue MakeNode(Link_Line P, ElemType e) {
-	if (P) {
-		P = (LNode_Line*)malloc(sizeof(LNode_Line));
-		StrCopy(&(P->data).Line_String,e.Line_String);
-		(P->data).Line_Num = (P->data).Beg_Pos = 0;
-		P->next = NULL;
+Statue MakeNode(Link_Line *P, ElemType e) {
+	if (*P) {
+		*P = (LNode_Line*)malloc(sizeof(LNode_Line));
+		StrCopy(&((*P)->data).Line_String,e.Line_String);
+		((*P)->data).Line_Num = ((*P)->data).Beg_Pos = 0;
+		(*P)->next = NULL;
 		return OK;
 	}
 	else
 		return ERROR;
 }
-Statue MakeNode_Char(Link_Line p, char *s)
+Statue MakeNode_Char(Link_Line *p, char *s)
 {
-	if (p) {
-		p = (LNode_Line*)malloc(sizeof(LNode_Line));
-		StrAssign(&(p->data).Line_String, s);
-		(p->data).Line_Num = (p->data).Beg_Pos = 0;
-		p->next = NULL;
+	if (*p) {
+		*p = (LNode_Line*)malloc(sizeof(LNode_Line));
+		StrAssign(&((*p)->data).Line_String, s);
+		((*p)->data).Line_Num = ((*p)->data).Beg_Pos = 0;
+		(*p)->next = NULL;
 		return OK;
 	}
 	else
@@ -36,7 +36,7 @@ Statue MakeNode_Char(Link_Line p, char *s)
 }
 void Change_Link_To_LinkList(LinkList_Line *L, Link_Line p)
 {
-	InitList(L);
+	InitList(&L);
 	L->head = p;
 	Link_Line tmp = p;
 	while (tmp->next != NULL)
@@ -51,25 +51,26 @@ void FreeNode(Link_Line P)
 	DestoryLine_Node(&P->data);
 	free(P);
 }
-Statue InitList(LinkList_Line *L) {
-	L = (LinkList_Line*)malloc(sizeof(LinkList_Line));
-	LNode_Line *p;
-	Make_head_Node(p);
-	L->head = p;
-	L->tail = p;
-	L->len = 0;
+Statue InitList(LinkList_Line **L_tmp) {
+	*L_tmp = (LinkList_Line*)malloc(sizeof(LinkList_Line));
+	Link_Line p;
+	Make_head_Node(&p);
+	(*L_tmp)->head = p;
+	(*L_tmp)->tail = p;
+	(*L_tmp)->len = 0;
 	return OK;
 }
-Statue Init_Line_Page(LinkList_Line *L, char *s[ONE_PAGE_LINE_NUM])//创建一个页所构成的行
+Statue Init_Line_Page(LinkList_Line **L, char **s)//创建一个页所构成的行
 {
 	InitList(L);
 	int index = 0;
-	while (index < ONE_PAGE_LINE_NUM)
+	while (index < ONE_PAGE_LINE_NUM&&index<=sizeof(s))
 	{
 		Link_Line p;
-		MakeNode_Char(p, s[index]);
+		MakeNode_Char(&p, s[index]);
 		++index;
-		Append(L, p);
+		Append(*L, p);
+		FreeNode(p);
 	}
 }
 Statue DestroyList(LinkList_Line *L) {
@@ -102,10 +103,11 @@ int Sum_Char_Num_Line(LinkList_Line *L)
 		sum += (ptr->data).Line_String.length;
 		ptr = ptr->next;
 	}
+	return sum;
 }
 int Sum_Line_Num_Line(LinkList_Line L)
 {
-	ListLength(L);
+	return ListLength(L);
 }
 int Sum_Line_Num_Line_Link(Link_Line s)
 {
@@ -190,7 +192,7 @@ Statue Assign_Node(Link_Line h, Link_Line s)
 }
 Statue Append(LinkList_Line *L, Link_Line s) {
 	L->tail->next = s;
-	LNode_Line *p = s;
+	Link_Line p = s;
 	int index = 1;
 	while (p->next!= NULL) {
 		p = p->next;
@@ -228,25 +230,25 @@ Statue InsBefore(LinkList_Line *L, Link_Line p, Link_Line s) {
 	{
 		ptr_s = ptr_s->next;
 	}
-	ptr_s->next = p;
 	Insert_Change_After(p, Sum_Line_Num_Line_Link(s), Sum_Char_Num_Line_Link(s));
+	ptr_s->next = p;
 	p = s;
 	return OK;
 }
-Statue Dele_Link(LinkList_Line *L, Link_Line p, int Del_Line_Num, Link_Line s)
+Statue Dele_Link(LinkList_Line *L, Link_Line p, int Del_Line_Num, Link_Line *s)
 {
 	Link_Line ptr;
-	PriorPos(L,p,ptr);
+	PriorPos(L,p,&ptr);
 	Link_Line p1 = ptr;
 	int index = 0;
 	while (index != Del_Line_Num)
 	{
 		p1 = p1->next;
 	}
-	s= ptr->next;
+	*s= ptr->next;
 	ptr->next = p1->next;
 	p1->next = NULL;
-	Delete_Change_After(ptr->next, Sum_Line_Num_Line_Link(s), Sum_Char_Num_Line_Link(s));
+	Delete_Change_After(ptr->next, Sum_Line_Num_Line_Link(*s), Sum_Char_Num_Line_Link(*s));
 	return OK;
 }
 Statue ListEmpty(LinkList_Line L) {
@@ -268,15 +270,14 @@ int ListLength(LinkList_Line L) {
 	}
 	return index;
 }
-Position_Line PriorPos(LinkList_Line *L, Link_Line p,Link_Line q) {
+void PriorPos(LinkList_Line *L, Link_Line p,Link_Line *q) {
 	if (p == L->head)
-		return NULL;
+		*q=NULL;
 	else {
-		q = L->head;
-		while (q->next != p) {
-			q = q->next;
+		(*q) = L->head;
+		while ((*q)->next != p) {
+			*q = (*q)->next;
 		}
-		return q;
 	}
 }
 Position_Line NextPos(LinkList_Line L, Link_Line p) {

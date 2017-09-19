@@ -4,7 +4,7 @@ Statue StrAssign(HString *T,char *chars)
 {
     if(T->ch)
     free(T->ch);//释放原有的空间
-    int char_num=sizeof(chars)/sizeof(chars[0])-1;//去掉最后的‘/0’字符
+    int char_num=strlen(chars)+1;//去掉最后的‘/0’字符
     if(char_num==0)
     {
         T->ch=NULL;
@@ -216,7 +216,7 @@ Statue Replace(HString *S,HString T,HString V)//用V替换S主串中所有与T�
             (S->ch)[i]=(S->ch)[i+k];//后面的字符向前移动
         }
 		char *s_tmp;
-		s_tmp = realloc(S->ch, S->length);//重新分配数据区，将替换后删除的数据截断
+		s_tmp = (char*)realloc(S->ch, S->length);//重新分配数据区，将替换后删除的数据截断
 		S->ch = s_tmp;
     }
     else
@@ -226,7 +226,7 @@ Statue Replace(HString *S,HString T,HString V)//用V替换S主串中所有与T�
             int k=V.length-T.length;
             S->length+=k;
 			char *s_tmp;
-			s_tmp = realloc(S->ch, S->length);//重新分配数据区，将替换后删除的数据截断
+			s_tmp = (char*)realloc(S->ch, S->length);//重新分配数据区，将替换后删除的数据截断
 			S->ch = s_tmp;
             int j=S->length-1;
             int i=pos;
@@ -242,7 +242,7 @@ Statue StrInsert(HString *S,int pos,HString T)
     int k=T.length;
     S->length+=k;
 	char *s_tmp;
-	s_tmp = realloc(S->ch, S->length);//重新分配数据区，将替换后删除的数据截断
+	s_tmp = (char*)realloc(S->ch, S->length);//重新分配数据区，将替换后删除的数据截断
 	S->ch = s_tmp;
     int j=S->length-1;
     for(;j>=pos-1+k;--j)
@@ -260,7 +260,7 @@ Statue StrDelete(HString *S,int pos,int len)
     }
     S->length-=len;
 	char *s_tmp;
-	s_tmp = realloc(S->ch, S->length);//重新分配数据区，将替换后删除的数据截断
+	s_tmp = (char*)realloc(S->ch, S->length);//重新分配数据区，将替换后删除的数据截断
 	S->ch = s_tmp;
     return OK;
 }
