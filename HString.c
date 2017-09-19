@@ -272,5 +272,5 @@ Statue DestoryString(HString *S)
 }
 void HStringPrint(HString *S)
 {
-	printf("%s", S->ch);
+	printf("%s\n", S->ch);
 }

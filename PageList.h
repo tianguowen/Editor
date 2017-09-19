@@ -1,7 +1,7 @@
 #ifndef PAGELIST_H
 #define PAGELIST_H
 
-#define ONE_LINE_CHAR_NUM 100 //一行中有100个字符
+#define ONE_LINE_CHAR_NUM 1000 //一行中有100个字符
 #include "Page_Node.h"
 #include <string.h>
 

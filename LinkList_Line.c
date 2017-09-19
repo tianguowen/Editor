@@ -64,13 +64,12 @@ Statue Init_Line_Page(LinkList_Line **L, char **s)//创建一个页所构成的�
 {
 	InitList(L);
 	int index = 0;
-	while (index < ONE_PAGE_LINE_NUM&&index<=sizeof(s))
+	Link_Line p;
+	while (index < ONE_PAGE_LINE_NUM&&index<=sizeof(*s)-1)
 	{
-		Link_Line p;
 		MakeNode_Char(&p, s[index]);
 		++index;
 		Append(*L, p);
-		FreeNode(p);
 	}
 }
 Statue DestroyList(LinkList_Line *L) {
@@ -191,15 +190,15 @@ Statue Assign_Node(Link_Line h, Link_Line s)
 	h->next = s->next;
 }
 Statue Append(LinkList_Line *L, Link_Line s) {
+	int incre_Num = Sum_Char_Num_Line(L);
+	int incre_Line_Num = L->len;//s开头的链表需要增加的行号；
 	L->tail->next = s;
 	Link_Line p = s;
 	int index = 1;
-	while (p->next!= NULL) {
+	while (p->next!= NULL&&p!=NULL) {
 		p = p->next;
 		++index;
 	}
-	int incre_Num = Sum_Char_Num_Line(L);
-	int incre_Line_Num = L->len;//s开头的链表需要增加的行号；
 	L->tail = p;
 	L->len += index;
 	Link_Line ptr = s;
@@ -323,9 +322,11 @@ Statue Change_String_Delete(Link_Line p, int pos, int len)
 }
 void Print_Line(LinkList_Line *L)
 {
-	Link_Line ptr = L->head;
+	Link_Line ptr = L->head->next;
 	while (ptr != NULL)
 	{
+		printf("%d       %d       ", ptr->data.Line_Num, ptr->data.Beg_Pos);
 		HStringPrint(&ptr->data.Line_String);
+		ptr = ptr->next;
 	}
 }

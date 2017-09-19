@@ -2,7 +2,7 @@
 
 Statue Make_Head_Node_Page(Link_Page *P)
 {
-	*P = (Link_Page)malloc(sizeof(Link_Page));
+	*P = (Link_Page)malloc(sizeof(LNode_Page));
 	(*P)->Page_data.Beg_Line_Num = 0;
 	(*P)->Page_data.Page_Num = 0;
 	(*P)->next = NULL;
@@ -28,7 +28,7 @@ void Assign_Page_Node(Link_Page p, Elemtype_Page e)
 }
 Statue Make_Node_Page(Link_Page *p, LinkList_Line *e)
 {
-	*p = (Link_Page)malloc(sizeof(Link_Page));
+	*p = (Link_Page)malloc(sizeof(LNode_Page));
 	Creat_Page_Node(&((*p)->Page_data), e);
 	(*p)->next = NULL;
 }
@@ -63,7 +63,7 @@ Statue Append_Page(LinkList_Page *L, Link_Page s)
 	L->Page_Len += index;
 	Link_Page ptr = s;
 	Change_Page_Beg_Data(ptr, Incre_Beg_Line_Num + 1, Incre_Page_Num + 1);//改变页的信息
-	if (t == NULL)
+	if (t == L->head)
 		Change_Page_Line_Information(ptr, 1, 1);
 	else
 	{
@@ -86,6 +86,7 @@ Statue Make_Book(LinkList_Page *L,char *s)//s代表文件的路径名称
 	while (1)
 	{
 		int i = 0;
+		int if_break = 0;
 		while (index < ONE_PAGE_LINE_NUM)
 		{
 			i = 0;
@@ -94,7 +95,10 @@ Statue Make_Book(LinkList_Page *L,char *s)//s代表文件的路径名称
 				++i;
 			}
 			if (text[i] == EOF)
+			{
+				if_break = 1;
 				break;
+			}
 			text[i + 1] = '\0';
 			strcpy(Line_Text[index], text);
 			++index;
@@ -114,10 +118,11 @@ Statue Make_Book(LinkList_Page *L,char *s)//s代表文件的路径名称
 			memset(Line_Text[i], 0, sizeof(Line_Text[0]));
 		}//全部清空Line_Text字符串数组，留作下一次循环使用
 	}
-	for (int i = 0; i < ONE_PAGE_LINE_NUM; ++i)
+	for (int j = 0; j < sizeof(Line_Text); ++j)
 	{
-		free(Line_Text[index]);
+		free(Line_Text[j]);
 	}//释放Line_Text的内存空间；
+	free(Line_Text);
 }
 Statue InitList_Page(LinkList_Page **L)
 {
@@ -391,9 +396,12 @@ Statue Insert_Line_Page(LinkList_Page *L, int Ins_Line_Num, Link_Line Ins_Line)
 }
 void Print_Page(LinkList_Page *P)
 {
-	Link_Page p;
+	Link_Page p = P->head->next;
+	printf("page_Num      Beg_Line_Num      Line_Num       Beg_Pos       data\n");
 	while (p != NULL)
 	{
+		printf("%d     %d     ", p->Page_data.Page_Num, p->Page_data.Beg_Line_Num);
 		Print_Line(&p->Page_data.data);
+		p = p->next;
 	}
 }
