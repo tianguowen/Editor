@@ -65,7 +65,12 @@ Statue Init_Line_Page(LinkList_Line **L, char **s)//创建一个页所构成的�
 	InitList(L);
 	int index = 0;
 	Link_Line p;
-	while (index < ONE_PAGE_LINE_NUM&&index<=sizeof(*s)-1)
+	int s_num = 0;
+	while (s_num<ONE_PAGE_LINE_NUM&&strlen(s[s_num]) !=0)
+	{
+		++s_num;
+	}
+	while (index < ONE_PAGE_LINE_NUM&&index<=s_num)
 	{
 		MakeNode_Char(&p, s[index]);
 		++index;
@@ -329,4 +334,26 @@ void Print_Line(LinkList_Line *L)
 		HStringPrint(&ptr->data.Line_String);
 		ptr = ptr->next;
 	}
+}
+int count_line_char_num(LinkList_Line *L)
+{
+	Link_Line ptr = L->head->next;
+	int char_num = 0;
+	while (ptr != NULL)
+	{
+		char_num += count_real_char_num(&ptr->data.Line_String);
+		ptr = ptr->next;
+	}
+	return char_num;
+}
+int count_line_word_num(LinkList_Line *L)
+{
+	Link_Line ptr = L->head->next;
+	int word_num = 0;
+	while (ptr != NULL)
+	{
+		word_num += count_real_word_num(&ptr->data.Line_String);
+		ptr = ptr->next;
+	}
+	return word_num;
 }

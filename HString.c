@@ -274,3 +274,49 @@ void HStringPrint(HString *S)
 {
 	printf("%s\n", S->ch);
 }
+int count_real_char_num(HString *S)
+{
+	char *ptr = S->ch;
+	int char_num = 0;
+	int i = 0;
+	while (ptr[i] != '\0')
+	{
+		if (isalnum(ptr[i]))
+		{
+			++char_num;
+			++i;
+		}
+		else
+		{
+			++i;
+		}
+	}
+	return char_num;
+}
+int judge_if_word(char *s, int pos)
+{
+	while (s[pos] != '\0' && (isalnum(s[pos])||s[pos]=='-'||s[pos]=='\''))
+	{
+		++pos;
+	}
+	return pos;
+}
+int count_real_word_num(HString *S)
+{
+	int index = 0;
+	int word_num = 0;
+	while (index <= S->length)
+	{
+		int k = judge_if_word(S->ch, index);
+		if (k == index)
+		{
+			++index;
+		}
+		else
+		{
+			index = k+1;
+			++word_num;
+		}
+	}
+	return word_num;
+}

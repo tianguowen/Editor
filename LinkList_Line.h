@@ -57,4 +57,6 @@ Statue Change_String_Replace(Link_Line p, HString T, HString V);
 Statue Change_String_Insert(Link_Line p, int pos, HString T);
 Statue Change_String_Delete(Link_Line p, int pos, int len);
 void Print_Line(LinkList_Line *L);
+int count_line_char_num(LinkList_Line *L);
+int count_line_word_num(LinkList_Line *L);
 #endif

@@ -109,13 +109,15 @@ Statue Make_Book(LinkList_Page *L,char *s)//s代表文件的路径名称
 		Link_Page p;
 		Make_Node_Page(&p, L_Line);
 		Append_Page(L, p);
-		if (index != ONE_PAGE_LINE_NUM - 1)
+		if (if_break)
 			break;
 		index = 0;
 		i = 0;
-		while (i < ONE_PAGE_LINE_NUM)
+		int k=0;
+		while (k < ONE_PAGE_LINE_NUM)
 		{
-			memset(Line_Text[i], 0, sizeof(Line_Text[0]));
+			memset(Line_Text[k], 0, sizeof(Line_Text[0]));
+			++k;
 		}//全部清空Line_Text字符串数组，留作下一次循环使用
 	}
 	for (int j = 0; j < sizeof(Line_Text); ++j)
@@ -404,4 +406,26 @@ void Print_Page(LinkList_Page *P)
 		Print_Line(&p->Page_data.data);
 		p = p->next;
 	}
+}
+Statue Count_Real_Char_Num(LinkList_Page *p)
+{
+	Link_Page ptr = p->head->next;
+	int char_num = 0;
+	while (ptr != NULL)
+	{
+		char_num += count_line_char_num(&ptr->Page_data.data);
+		ptr = ptr->next;
+	}
+	return char_num;
+}
+Statue Count_Real_Word_Num(LinkList_Page *p)
+{
+	Link_Page ptr = p->head->next;
+	int word_num = 0;
+	while (ptr != NULL)
+	{
+		word_num += count_line_word_num(&ptr->Page_data.data);
+		ptr = ptr->next;
+	}
+	return word_num;
 }

@@ -43,4 +43,6 @@ Statue Insert_Page_Bef(LinkList_Page *L, Link_Page p, Link_Page q);
 Statue Split_Page(LinkList_Page *L, int Line_Num);
 Statue Insert_Line_Page(LinkList_Page *L, int Ins_Line_Num, Link_Line Ins_Line);
 void Print_Page(LinkList_Page *P);
+Statue Count_Real_Char_Num();//除去空格和标点后剩余的字符数
+Statue Count_Real_Word_Num();//所有单词的总数
 #endif // !PAGELIST_H
