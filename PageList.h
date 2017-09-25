@@ -45,4 +45,5 @@ Statue Insert_Line_Page(LinkList_Page *L, int Ins_Line_Num, Link_Line Ins_Line);
 void Print_Page(LinkList_Page *P);
 Statue Count_Real_Char_Num();//除去空格和标点后剩余的字符数
 Statue Count_Real_Word_Num();//所有单词的总数
+int Count_some_word_num(LinkList_Page *p, char *s);//统计某个单词出现的频率
 #endif // !PAGELIST_H

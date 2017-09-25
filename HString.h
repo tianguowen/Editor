@@ -34,4 +34,5 @@ void HStringPrint(HString *S);//打印该HString;
 int count_real_char_num(HString *S);//计算该HString中字母和数字的字符数
 int judge_if_word(char *s,int pos);//自此pos字符开始往后判断，如果遇到空格或者标点符号则返回该标点位置;
 int count_real_word_num(HString *S);//计算该HString中的单词数
+int count_word_frequent(HString *S, HString *s1);
 #endif

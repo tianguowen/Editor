@@ -59,4 +59,5 @@ Statue Change_String_Delete(Link_Line p, int pos, int len);
 void Print_Line(LinkList_Line *L);
 int count_line_char_num(LinkList_Line *L);
 int count_line_word_num(LinkList_Line *L);
+int count_line_word_frequent(LinkList_Line *L, HString *s);
 #endif

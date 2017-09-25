@@ -429,3 +429,16 @@ Statue Count_Real_Word_Num(LinkList_Page *p)
 	}
 	return word_num;
 }
+int Count_some_word_num(LinkList_Page *p, char *s)
+{
+	HString s_tmp;
+	StrAssign(&s_tmp, s);
+	Link_Page ptr = p->head->next;
+	int sum = 0;
+	while (ptr != NULL)
+	{
+		sum += count_line_word_frequent(&ptr->Page_data.data, &s_tmp);
+		ptr = ptr->next;
+	}
+	return sum;
+}

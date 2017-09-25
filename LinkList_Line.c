@@ -293,14 +293,14 @@ Position_Line NextPos(LinkList_Line L, Link_Line p) {
 Statue Change_String(Link_Line p,char *s)
 {
 	int i = (p->data).Line_String.length;
-	StrAssign(&(p->data).Line_String, s);
+	StrAssign(&p->data.Line_String, s);
 	int j = (p->data).Line_String.length - i;
 	Insert_Change_After(p->next, 0, j);
 }
 Statue Change_String_Copy(Link_Line p, HString s)
 {
 	int i = (p->data).Line_String.length;
-	StrCopy(&(p->data).Line_String, s);
+	StrCopy(&p->data.Line_String, s);
 	int j = (p->data).Line_String.length - i;
 	Insert_Change_After(p->next, 0, j);
 }
@@ -356,4 +356,15 @@ int count_line_word_num(LinkList_Line *L)
 		ptr = ptr->next;
 	}
 	return word_num;
+}
+int count_line_word_frequent(LinkList_Line *L, HString *s)
+{
+	int sum = 0;
+	Link_Line p = L->head->next;
+	while (p != NULL)
+	{
+		sum += count_word_frequent(&p->data.Line_String, s);
+		p = p->next;
+	}
+	return sum;
 }

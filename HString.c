@@ -151,46 +151,42 @@ Statue SubString(HString *Sub,HString S,int pos,int len)
 }
 void get_next(HString T,int next[])
 {
-    int len=T.length;
-    next[0]=0;
-    for(int i=1;i<len;++i)
-    {
-        int k=next[i-1];
-        //k表示的是当前字符与第几个字符进行比对
-        //k==0表示前一个字符的next值==0，所以前一个
-        //字符没有对称项，所以当前字符与第一个字符匹配
-        //如果匹配上表示有一个对称，当前字符的next值为1
-        //依次推理下去下一个字符与第二个字符匹配，如果匹配上
-        //则next值＋1，如果不匹配则k值回跳寻找对称项
-        while(T.ch[i]!=T.ch[k]&&k!=0)
-        k=next[k-1];
-        if(T.ch[i]==T.ch[k])
-        next[i]=k+1;
-        else
-        {
-            next[i]=0;
-        }
-    }
+	int i = 1;
+	int j = 0;
+	next[0] = next[1] = 0;
+	while (i < strlen(T.ch))
+	{
+		if (j == 0 || T.ch[i] == T.ch[j])
+		{
+			i++;
+			j++;
+			next[i] =j;
+		}
+		else
+			j = next[j];
+	}
 }
 int Index(HString S,HString T,int pos)
 {
-    int next[100];
+	int length = T.length-1;
+    int next[length];
     get_next(T,next);
     int i=pos;
     int j=1;
-    while(i<S.length&&j<T.length)
+    while(i<=strlen(S.ch)&&j<=strlen(T.ch))
     {
-        if(j==0||S.ch[i]==T.ch[j])
+        if(j==0||S.ch[i]==T.ch[j-1])
         {
             ++i;++j;
         }
         else
         j=next[j];
     }
-    if(j>=T.length)
-    return i-T.length;//这个返回值是数组下标
+    if(j>=strlen(T.ch))
+    return i-strlen(T.ch);//这个返回值是数组下标
+	else
     {
-        return 0;
+        return -1;
     }
 }
 Statue Replace(HString *S,HString T,HString V)//用V替换S主串中所有与T相等且不重叠的子串
@@ -319,4 +315,21 @@ int count_real_word_num(HString *S)
 		}
 	}
 	return word_num;
+}
+int count_word_frequent(HString *S1, HString *S2)
+{
+	int index = 0;
+	int sum = 0;
+	while (1)
+	{
+		int next_pos = Index(*S1, *S2, index);
+		if (next_pos == -1)
+			break;
+		else
+		{
+			index=next_pos+strlen(S2->ch);
+		}
+		++sum;
+	}
+	return sum;
 }
